@@ -46,7 +46,7 @@ def ccwc(f_name, flag):
 
 flag = sys.argv[1] if len(sys.argv) > 2 else None
 
-if (flag and flag not in ["-c", "-l", "-w"]) or len(sys.argv) > 3:
+if flag not in ["-c", "-l", "-w", None] or len(sys.argv) > 3:
     print("The only acceptable flags are -c, -l and -w and you must provide at most one flag.")
 else:
     filename = sys.argv[-1]
