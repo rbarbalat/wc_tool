@@ -27,6 +27,7 @@ def ccwc(f_name, c, l, w, pipe):
     #read from std input IF filename NOT provided
     elif pipe:
         file = sys.stdin
+        num_bytes = "99999999999"   #fix this!
 
     output += str(num_bytes) + " bytes" if c else ""
 
@@ -69,6 +70,10 @@ pipe = not sys.stdin.isatty()
 #sys.stdin.isatty() is True if something was piped in
 
 #print(sys.stdin.readlines())
+
+# x = sys.stdin
+# print(len(x.read()))
+# print(len(x.readlines()))
 
 if not args.filename and not pipe:
     print("You must provide a filename on the command line or pipe a file")
