@@ -5,7 +5,7 @@ import sys
 #https://docs.python.org/3/library/argparse.html#core-functionality
 
 
-def ccwc(f_name, c, l, w):
+def ccwc(f_name, c, l, w, pipe):
 
     all = True if ((c and l and w) or (not c and not l and not w)) else False
     c = c or all
@@ -14,15 +14,21 @@ def ccwc(f_name, c, l, w):
 
     output = ""
 
-    try:
-        file = open(f_name)
-        file_stats = os.stat(f_name)
+    if f_name:
+        try:
+            file = open(f_name)
+            file_stats = os.stat(f_name)
+            num_bytes = file_stats.st_size
 
-    except OSError:
-        print(f_name + " can't be opened")
-        return
+        except OSError:
+            print(f_name + " can't be opened")
+            return
 
-    output += str(file_stats.st_size) + " bytes" if c else ""
+    #read from std input IF filename NOT provided
+    elif pipe:
+        file = sys.stdin
+
+    output += str(num_bytes) + " bytes" if c else ""
 
     if l or w:
         lines = [line for line in file]
@@ -36,7 +42,8 @@ def ccwc(f_name, c, l, w):
     if w:
         output += " " + str(words) + " words" if (c or l) else str(words) + " words"
 
-    print(output + " " + f_name)
+    output += " " + f_name if f_name else ""
+    print(output)
 
 #sys.argv is a list of the command line arguments
 #sys.argv[0] is the name of the python file
@@ -58,7 +65,12 @@ parser.add_argument("filename", nargs="?")
 args = parser.parse_args()
 #print(args.bytes, args.lines, args.words, args.filename)
 
-if not args.filename:
-    print("You must provide a filename")
+pipe = not sys.stdin.isatty()
+#sys.stdin.isatty() is True if something was piped in
+
+#print(sys.stdin.readlines())
+
+if not args.filename and not pipe:
+    print("You must provide a filename on the command line or pipe a file")
 else:
-    ccwc(args.filename, args.bytes, args.lines, args.words)
+    ccwc(args.filename, args.bytes, args.lines, args.words, pipe)
