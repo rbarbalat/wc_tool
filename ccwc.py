@@ -27,21 +27,31 @@ def ccwc(f_name, c, l, w, pipe):
     #read from std input IF filename NOT provided
     elif pipe:
         file = sys.stdin
-        num_bytes = "99999999999"   #fix this!
+        num_bytes = ""  #calculate it below
 
-    output += str(num_bytes) + " bytes" if c else ""
+    output += str(num_bytes) if c else ""
 
     if l or w:
         lines = [line for line in file]
         if l:
-            output += (" " + str(len(lines)) + " lines") if c else str(len(lines)) + " lines"
-
-    words = 0
-    for line in lines:
-        words += len(line.split())
+            output += (" " + str(len(lines))) if c else str(len(lines))
 
     if w:
-        output += " " + str(words) + " words" if (c or l) else str(words) + " words"
+        words = 0
+        num_bytes = 0
+        for line in lines:
+            arr = line.split()
+            words += len(arr)
+            if pipe:
+                for word in arr:
+                    num_bytes += len(word)
+
+        output += " " + str(words) if (c or l) else str(words)
+
+        #in case filename argument was given and something was piped as well
+        if pipe and c and not f_name:
+            output = str(num_bytes) + output
+            #the space in the front has already been added above (if l or w)
 
     output += " " + f_name if f_name else ""
     print(output)
@@ -68,12 +78,6 @@ args = parser.parse_args()
 
 pipe = not sys.stdin.isatty()
 #sys.stdin.isatty() is True if something was piped in
-
-#print(sys.stdin.readlines())
-
-# x = sys.stdin
-# print(len(x.read()))
-# print(len(x.readlines()))
 
 if not args.filename and not pipe:
     print("You must provide a filename on the command line or pipe a file")
