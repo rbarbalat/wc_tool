@@ -40,11 +40,11 @@ def ccwc(f_name, c, l, w, pipe):
         words = 0
         num_bytes = 0
         for line in lines:
-            arr = line.split()
-            words += len(arr)
+            words += len(line.split())
             if pipe:
-                for word in arr:
-                    num_bytes += len(word)
+                num_bytes += len(line)
+                #every char is a byte including " " and "\n"
+                #missing some of the bytes somewhere...
 
         output += " " + str(words) if (c or l) else str(words)
 
