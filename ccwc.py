@@ -4,7 +4,7 @@ import sys
 
 #https://docs.python.org/3/library/argparse.html#core-functionality
 
-
+#https://codingchallenges.fyi/challenges/challenge-wc
 def ccwc(f_name, c, l, w, pipe):
 
     all = True if ((c and l and w) or (not c and not l and not w)) else False
@@ -27,32 +27,26 @@ def ccwc(f_name, c, l, w, pipe):
     #read from std input IF filename NOT provided
     elif pipe:
         file = sys.stdin
-        num_bytes = ""  #calculate it below
 
-    output += str(num_bytes) if c else ""
+    if c and not pipe:
+        output += str(num_bytes)
 
-    if l or w:
+    if l or w or (c and pipe):
         lines = [line for line in file]
+
+        if c and pipe:
+            num_bytes = sum([len(line.encode("utf8")) for line in lines])
+            output += str(num_bytes)
+
         if l:
             output += (" " + str(len(lines))) if c else str(len(lines))
 
     if w:
         words = 0
-        num_bytes = 0
         for line in lines:
             words += len(line.split())
-            #print(line[0] + "     " + str(len(line)))
-            if pipe:
-                num_bytes += len(line)
-                #num_bytes += len(line) if line else 1
-                #every char is a byte including " " and "\n"
 
         output += " " + str(words) if (c or l) else str(words)
-
-        #in case filename argument was given and something was piped as well
-        if pipe and c and not f_name:
-            output = str(num_bytes) + output
-            #the space in the front has already been added above (if l or w)
 
     output += " " + f_name if f_name else ""
     print(output)
@@ -82,5 +76,7 @@ pipe = not sys.stdin.isatty()
 
 if not args.filename and not pipe:
     print("You must provide a filename on the command line or pipe a file")
+elif args.filename and pipe:
+    print("You must provide a filename or pipe a file but NOT BOTH")
 else:
     ccwc(args.filename, args.bytes, args.lines, args.words, pipe)
