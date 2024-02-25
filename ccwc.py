@@ -51,15 +51,11 @@ def ccwc(f_name, c, l, w, pipe):
     output += " " + f_name if f_name else ""
     print(output)
 
-#sys.argv is a list of the command line arguments
-#sys.argv[0] is the name of the python file
-
 parser = argparse.ArgumentParser(
                     prog='wc_tool',
                     description='My version of wc',
                     epilog='Text at the bottom of help')
 
-# parser.add_argument("-v", "--value")
 # action="store_true" for an optional flag that is present or absent (no value)
 parser.add_argument("-c", "--bytes", action="store_true")
 parser.add_argument("-l", "--lines", action="store_true")
@@ -69,10 +65,9 @@ parser.add_argument("filename", nargs="?")
 #nargs="?" makes the positional arg optional
 
 args = parser.parse_args()
-#print(args.bytes, args.lines, args.words, args.filename)
 
 pipe = not sys.stdin.isatty()
-#sys.stdin.isatty() is True if something was piped in
+#sys.stdin.isatty() is FALSE if something was piped in
 
 if not args.filename and not pipe:
     print("You must provide a filename on the command line or pipe a file")
